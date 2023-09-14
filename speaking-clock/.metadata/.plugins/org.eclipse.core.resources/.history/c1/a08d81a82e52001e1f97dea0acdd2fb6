@@ -1,0 +1,93 @@
+package com.wisdomLeaf.speakingclock;
+
+import static org.junit.Assert.assertEquals;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.wisdomLeaf.speakingclock.exception.InvalidHourException;
+import com.wisdomLeaf.speakingclock.exception.InvalidMinuteException;
+import com.wisdomLeaf.speakingclock.repository.TimeConversionRepository;
+import com.wisdomLeaf.speakingclock.serviceImplementation.TimeConversionServiceImpl;
+
+@SpringBootTest
+class SpeakingClockApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+	@InjectMocks
+	private TimeConversionServiceImpl timeConversionService;
+	@Mock
+	private TimeConversionRepository timeConversionRepository;
+
+	@SuppressWarnings("deprecation")
+	@BeforeEach
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
+
+	@Test
+	public void testConvertTimeToWords_ValidTime() {
+		String hour = testConvertTimeToWords_InvalidHour();
+		String mins = testConvertTimeToWords_InvalidMinute();
+		String inputTime = "08:34";
+
+		String convertedTime = timeConversionService.convertTimeToWords(inputTime);
+
+		assertEquals("It's eight thirty-four", convertedTime);
+	}
+
+	@Test
+	public void testConvertTimeToWords_Midday() {
+		String inputTime = "12:00";
+
+		String convertedTime = timeConversionService.convertTimeToWords(inputTime);
+
+		assertEquals("It's Midday", convertedTime);
+	}
+
+	@Test
+	public void testConvertTimeToWords_Midnight() {
+		String inputTime = "00:00";
+
+		String convertedTime = timeConversionService.convertTimeToWords(inputTime);
+
+		assertEquals("It's Midnight", convertedTime);
+	}
+
+	@Test
+	public String testConvertTimeToWords_InvalidHour() {
+		SimpleDateFormat sd = new SimpleDateFormat("HH");
+		LocalDateTime now = LocalDateTime.now();
+		String inputTime = sd.format(now);
+
+		try {
+			 inputTime = timeConversionService.convertTimeToWords(inputTime);
+		} catch (InvalidHourException e) {
+			assertEquals("Invalid hour value.", e.getMessage());
+		}
+		return inputTime;
+	}
+
+	@Test
+	public void testConvertTimeToWords_InvalidMinute() {
+		SimpleDateFormat sd = new SimpleDateFormat("mm");
+		LocalDateTime now = LocalDateTime.now();
+		String inputTime = sd.format(now);
+
+		try {
+			timeConversionService.convertTimeToWords(inputTime);
+		} catch (InvalidMinuteException e) {
+			assertEquals("Invalid minute value.", e.getMessage());
+		}
+	}
+}

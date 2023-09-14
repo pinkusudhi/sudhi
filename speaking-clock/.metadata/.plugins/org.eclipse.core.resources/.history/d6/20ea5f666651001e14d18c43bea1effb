@@ -1,0 +1,56 @@
+package com.wisdomLeaf.speakingclock.util;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+
+public class Clock {
+	public static String convertTimeToWords(String inputTime) {
+        if (!isValidTimeFormat(inputTime)) {
+            throw new TimeConversionException("Invalid time format. Please provide time in HH:mm format.");
+        }
+
+        LocalTime localTime = LocalTime.parse(inputTime, DateTimeFormatter.ofPattern("HH:mm"));
+
+        String convertedHours = convertHoursToWords(localTime.getHour());
+        String convertedMinutes = convertMinutesToWords(localTime.getMinute());
+
+        String timeWords;
+        if (localTime.equals(LocalTime.NOON)) {
+            timeWords = "It's Midday";
+        } else if (localTime.equals(LocalTime.MIDNIGHT)) {
+            timeWords = "It's Midnight";
+        } else {
+            timeWords = "It's " + convertedHours + " " + convertedMinutes;
+        }
+
+        return timeWords;
+    }
+
+    private static boolean isValidTimeFormat(String input) {
+        return input.matches("^\\d{2}:\\d{2}$");
+    }
+
+    private static String convertHoursToWords(int hours) {
+        // Logic for converting hours to words
+    }
+
+    private static String convertMinutesToWords(int minutes) {
+        // Logic for converting minutes to words
+    }
+
+    // Other utility methods for time-related operations
+
+    private static String convertTeenToWords(int number) {
+        // Logic for converting teen values to words
+    }
+
+    private static String convertTensToWords(int number) {
+        // Logic for converting tens values to words
+    }
+
+    private static String convertSingleDigitToWords(int number) {
+        // Logic for converting single digits to words
+    }
+}

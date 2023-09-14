@@ -1,0 +1,14 @@
+package com.wisdomLeaf.speakingclock.exception;
+
+public class InvalidHourException extends RuntimeException{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3621517140620161450L;
+
+	public InvalidHourException(String message) {
+        super("invelid hour: " + message);
+    }
+
+}

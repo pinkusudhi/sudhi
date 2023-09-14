@@ -1,0 +1,116 @@
+package com.wisdomLeaf.speakingclock.serviceImplementation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+import com.wisdomLeaf.speakingclock.model.TimeConversion;
+import com.wisdomLeaf.speakingclock.repository.TimeConversionRepository;
+import com.wisdomLeaf.speakingclock.service.TimeConversionService;
+
+@Service
+public class TimeConversionServiceImpl implements com.wisdomLeaf.speakingclock.service.TimeConversionService{
+
+	@Autowired
+	private TimeConversionRepository timeConversionRepository;
+
+    @Override
+    public String convertTimeToWords(String inputTime) {
+        @Override
+        public String convertTimeToWords(String inputTime) {
+            try {
+                // Parse the input time string into a LocalTime object
+                LocalTime localTime = LocalTime.parse(inputTime, DateTimeFormatter.ofPattern("HH:mm"));
+
+                // Convert hours and minutes to words
+                String timeWords = convertHoursToWords(localTime.getHour()) +
+                                   " " + convertMinutesToWords(localTime.getMinute());
+
+                // Determine if it's Midday or Midnight
+                if (localTime.equals(LocalTime.NOON)) {
+                    timeWords = "It's Midday";
+                } else if (localTime.equals(LocalTime.MIDNIGHT)) {
+                    timeWords = "It's Midnight";
+                } else {
+                    timeWords = "It's " + timeWords;
+                }
+
+                // Save the conversion to the database
+                TimeConversion timeConversion = new TimeConversion();
+                timeConversion.setInputTime(inputTime);
+                timeConversion.setConvertedTime(timeWords);
+                timeConversionRepository.save(timeConversion);
+
+                return timeWords;
+            } catch (Exception e) {
+                throw new TimeConversionException("Invalid time format. Please provide time in HH:mm format.");
+            }
+        }
+
+        private String convertHoursToWords(int hours) {
+            String[] hourNames = {
+                "Midnight", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", 
+                "Eleven", "Noon", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
+            };
+            
+            if (hours >= 0 && hours <= 23) {
+                return hourNames[hours];
+            }
+            
+            throw new TimeConversionException("Invalid hour value.");
+        }
+
+        private String convertMinutesToWords(int minutes) {
+            if (minutes >= 0 && minutes <= 59) {
+                if (minutes == 0) {
+                    return "o'clock";
+                } else if (minutes <= 9) {
+                    return "oh " + convertSingleDigitToWords(minutes);
+                } else if (minutes >= 10 && minutes <= 19) {
+                    return convertTeenToWords(minutes);
+                } else {
+                    int tens = minutes / 10;
+                    int ones = minutes % 10;
+                    return convertTensToWords(tens) + " " + convertSingleDigitToWords(ones);
+                }
+            }
+            
+            throw new TimeConversionException("Invalid minute value.");
+        }
+
+        private String convertTeenToWords(int number) {
+            String[] teens = {
+                "", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+            };
+            
+            if (number >= 11 && number <= 19) {
+                return teens[number - 10];
+            }
+            
+            throw new TimeConversionException("Invalid teen value.");
+        }
+
+        private String convertTensToWords(int number) {
+            String[] tens = {
+                "", "", "Twenty", "Thirty", "Forty", "Fifty"
+            };
+            
+            if (number >= 2 && number <= 5) {
+                return tens[number];
+            }
+            
+            throw new TimeConversionException("Invalid tens value.");
+        }
+
+        private String convertSingleDigitToWords(int number) {
+            String[] singleDigits = {
+                "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
+            };
+            
+            if (number >= 0 && number <= 9) {
+                return singleDigits[number];
+            }
+            
+            throw new TimeConversionException("Invalid single digit value.");
+    }
+}

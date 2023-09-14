@@ -1,0 +1,64 @@
+package com.wisdomLeaf.speakingclock;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.wisdomLeaf.speakingclock.controller.ClockController;
+import com.wisdomLeaf.speakingclock.serviceImplementation.TimeConversionServiceImpl;
+
+public class ClockControllerTest {
+
+	@InjectMocks
+	private ClockController controller;
+
+	@Mock
+	private TimeConversionServiceImpl timeConversionServiceImpl;
+
+	@SuppressWarnings("deprecation")
+	@BeforeEach
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
+
+	@Test
+	public void testConvertTime_Success() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+		LocalDateTime now = LocalDateTime.now();
+		String inputTime = dtf.format(now);
+		LocalTime localTime = LocalTime.parse(inputTime, DateTimeFormatter.ofPattern("HH:mm"));
+		String expectedOutput = "It's " + timeConversionServiceImpl.convertHoursToWords(localTime.getHour()) + " "
+				+ timeConversionServiceImpl.convertMinutesToWords(localTime.getMinute());
+
+		when(timeConversionServiceImpl.convertTimeToWords(inputTime)).thenReturn(null);
+
+		ResponseEntity<String> response = controller.convertTime(inputTime);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(expectedOutput, response.getBody());
+	}
+
+	@Test
+	public void testConvertTime_Error() {
+		String inputTime = "invalid_time";
+
+		when(timeConversionServiceImpl.convertTimeToWords(inputTime))
+				.thenThrow(new RuntimeException("Invalid time format"));
+
+		ResponseEntity<String> response = controller.convertTime(inputTime);
+
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Error converting time: Invalid time format", response.getBody());
+	}
+}

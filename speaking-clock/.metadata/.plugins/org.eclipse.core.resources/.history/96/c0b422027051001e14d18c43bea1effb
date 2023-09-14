@@ -1,0 +1,5 @@
+package com.wisdomLeaf.speakingclock.serviceImplementation;
+
+public class TimeConversionServiceTest {
+
+}

@@ -1,0 +1,58 @@
+package com.wisdomLeaf.speakingclock;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.wisdomLeaf.speakingclock.controller.ClockController;
+import com.wisdomLeaf.speakingclock.service.TimeConversionService;
+
+public class ClockControllerTest {
+	
+	@InjectMocks
+    private ClockController controller;
+
+    @Mock
+    private TimeConversionService timeConversionService;
+
+    @SuppressWarnings("deprecation")
+	@BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testConvertTime_Success() {
+        String inputTime = "08:34";
+        String expectedOutput = "It's eight thirty-four";
+
+        when(timeConversionService.convertTimeToWords(inputTime)).thenReturn(expectedOutput);
+
+        ResponseEntity<String> response = controller.convertTime(inputTime);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedOutput, response.getBody());
+    }
+
+    @Test
+    public void testConvertTime_Error() {
+        String inputTime = "invalid_time";
+
+        when(timeConversionService.convertTimeToWords(inputTime))
+            .thenThrow(new RuntimeException("Invalid time format"));
+
+        ResponseEntity<String> response = controller.convertTime(inputTime);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Error converting time: Invalid time format", response.getBody());
+    }
+    
+    // Add more test cases to cover different scenarios
+}

@@ -1,0 +1,57 @@
+package com.wisdomLeaf.speakingclock.controller;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.wisdomLeaf.speakingclock.serviceImplementation.TimeConversionServiceImpl;
+
+import jakarta.validation.constraints.NotNull;
+
+@RestController
+@RequestMapping("/clock")
+public class ClockController {
+	
+	@Autowired
+	private TimeConversionServiceImpl timeConversionServiceImpl;
+	
+ //   @GetMapping("/convert")
+//    public ResponseEntity<String> convertTime(@RequestBody @NotNull String inputTime) {
+//        try {
+//        	inputTime = presentTime();
+//            String convertedTime = timeConversionServiceImpl.convertTimeToWords(inputTime);
+//            return ResponseEntity.ok(convertedTime);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Error converting time: " + e.getMessage());
+//        }
+//    }
+    @GetMapping("/convert")
+    public ResponseEntity<String> convertTime(@RequestBody @NotNull String inputTime) {
+        try {
+            if (!isValidTimeFormat(inputTime)) {
+                return ResponseEntity.badRequest().body("Invalid time format. Please provide time in HH:mm format.");
+            }
+            String convertedTime = timeConversionServiceImpl.convertTimeToWords(inputTime);
+            return ResponseEntity.ok(convertedTime);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error converting time: " + e.getMessage());
+        }
+    }
+
+    private boolean isValidTimeFormat(String input) {
+        return input.matches("^\\d{2}:\\d{2}$");
+    }
+    public static String presentTime()
+    {
+    	SimpleDateFormat smdformat = new SimpleDateFormat("HH:mm");
+    	LocalDateTime currentTime = LocalDateTime.now();
+    	String presentDate = smdformat.format(currentTime);
+    	return presentDate;
+    }
+}

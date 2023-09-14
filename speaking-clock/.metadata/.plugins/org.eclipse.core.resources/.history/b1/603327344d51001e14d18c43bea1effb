@@ -1,0 +1,30 @@
+package com.wisdomLeaf.speakingclock.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+import com.wisdomLeaf.speakingclock.model.TimeConversion;
+import com.wisdomLeaf.speakingclock.service.TimeConversionService;
+
+@RestController
+@RequestMapping("/clock")
+public class ClockController {
+	private final TimeConversionService timeConversionService;
+
+    @Autowired
+    public ClockController(TimeConversionService timeConversionService) {
+        this.timeConversionService = timeConversionService;
+    }
+
+    @PostMapping("/convert")
+    public ResponseEntity<String> convertTime(@RequestBody String inputTime) {
+        try {
+            String convertedTime = timeConversionService.convertTimeToWords(inputTime);
+            return ResponseEntity.ok(convertedTime);
+        } catch (TimeConversionException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}

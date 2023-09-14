@@ -1,0 +1,5 @@
+package com.wisdomLeaf.speakingclock.repository;
+
+public interface TimeConversionRepository {
+
+}

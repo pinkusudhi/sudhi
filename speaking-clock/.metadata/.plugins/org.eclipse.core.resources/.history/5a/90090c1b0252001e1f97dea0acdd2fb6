@@ -1,0 +1,48 @@
+package com.wisdomLeaf.speakingclock.controller;
+
+import java.security.PublicKey;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+
+import javax.xml.crypto.Data;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+//import com.wisdomLeaf.speakingclock.service.TimeConversionService;
+import com.wisdomLeaf.speakingclock.serviceImplementation.TimeConversionServiceImpl;
+
+import jakarta.validation.constraints.NotNull;
+
+@RestController
+@RequestMapping("/clock")
+public class ClockController {
+	
+	@Autowired
+	private TimeConversionServiceImpl timeConversionServiceImpl;
+	
+//	@Autowired
+//    private TimeConversionService timeConversionService;
+    @GetMapping("/convert")
+    public ResponseEntity<String> convertTime(@RequestBody @NotNull String inputTime) {
+        try {
+        	inputTime = "08:34";
+            String convertedTime = timeConversionServiceImpl.convertTimeToWords(inputTime);
+            return ResponseEntity.ok(convertedTime);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error converting time: " + e.getMessage());
+        }
+    }
+//    public static String presentTime()
+//    {
+//    	SimpleDateFormat smdformat = new SimpleDateFormat("HH:mm");
+//    	LocalDateTime currentTime = LocalDateTime.now();
+//    	String presentDate = smdformat.format(currentTime);
+//    	return presentDate;
+//    }
+}

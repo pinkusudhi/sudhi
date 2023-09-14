@@ -1,0 +1,7 @@
+package com.wisdomLeaf.speakingclock.exception;
+
+public class InvalidMinuteException extends RuntimeException {
+	public InvalidMinuteException(String message) {
+        super(message);
+    }
+}

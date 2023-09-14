@@ -1,0 +1,12 @@
+package com.wisdomLeaf.speakingclock.exception;
+
+public class TimeConversionException extends RuntimeException{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public TimeConversionException(String message) {
+        super(message);
+    }
+}

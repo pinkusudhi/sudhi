@@ -1,0 +1,104 @@
+package com.wisdomLeaf.speakingclock.util;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import com.wisdomLeaf.speakingclock.exception.InvalidHourException;
+import com.wisdomLeaf.speakingclock.exception.InvalidMinuteException;
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+
+public class Clock {
+	public static String convertTimeToWords(String inputTime) {
+        if (!isValidTimeFormat(inputTime)) {
+            throw new TimeConversionException("Invalid time format. Please provide time in HH:mm format.");
+        }
+
+        LocalTime localTime = LocalTime.parse(inputTime, DateTimeFormatter.ofPattern("HH:mm"));
+
+        String convertedHours = convertHoursToWords(localTime.getHour());
+        String convertedMinutes = convertMinutesToWords(localTime.getMinute());
+
+        String timeWords;
+        if (localTime.equals(LocalTime.NOON)) {
+            timeWords = "It's Midday";
+        } else if (localTime.equals(LocalTime.MIDNIGHT)) {
+            timeWords = "It's Midnight";
+        } else {
+            timeWords = "It's " + convertedHours + " " + convertedMinutes;
+        }
+
+        return timeWords;
+    }
+
+    private static boolean isValidTimeFormat(String input) {
+        return input.matches("^\\d{2}:\\d{2}$");
+    }
+
+    private static String convertHoursToWords(int hours) {
+        String[] hourWords = {
+            "Midnight", "One", "Two", "Three", "Four",
+            "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Noon"
+        };
+
+        if (hours >= 0 && hours <= 11) {
+            return hourWords[hours];
+        } else {
+            throw new InvalidHourException("Invalid hour value.");
+        }
+    }
+
+    private static String convertMinutesToWords(int minutes) {
+        if (minutes >= 0 && minutes <= 59) {
+            if (minutes == 0) {
+                return "o'clock";
+            } else if (minutes <= 9) {
+                return "oh " + convertSingleDigitToWords(minutes);
+            } else if (minutes >= 10 && minutes <= 19) {
+                return convertTeenToWords(minutes);
+            } else {
+                int tens = minutes / 10;
+                int ones = minutes % 10;
+                return convertTensToWords(tens) + " " + convertSingleDigitToWords(ones);
+            }
+        } else {
+            throw new InvalidMinuteException("Invalid minute value.");
+        }
+    }
+
+    private static String convertTeenToWords(int number) {
+        String[] teenWords = {
+            "", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+            "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+        };
+
+        if (number >= 11 && number <= 19) {
+            return teenWords[number - 10];
+        } else {
+            throw new TimeConversionException("Invalid teen value.");
+        }
+    }
+
+    private static String convertTensToWords(int number) {
+        String[] tensWords = {
+            "", "", "Twenty", "Thirty", "Forty", "Fifty"
+        };
+
+        if (number >= 2 && number <= 5) {
+            return tensWords[number];
+        } else {
+            throw new TimeConversionException("Invalid tens value.");
+        }
+    }
+
+    private static String convertSingleDigitToWords(int number) {
+        String[] singleDigitWords = {
+            "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
+        };
+
+        if (number >= 0 && number <= 9) {
+            return singleDigitWords[number];
+        } else {
+            throw new TimeConversionException("Invalid single digit value.");
+        }
+    }
+}

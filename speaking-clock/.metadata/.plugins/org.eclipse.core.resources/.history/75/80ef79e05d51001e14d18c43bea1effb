@@ -1,0 +1,5 @@
+package com.wisdomLeaf.speakingclock.exception;
+
+public class InvalidHourException {
+
+}

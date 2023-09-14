@@ -1,0 +1,53 @@
+package com.wisdomLeaf.speakingclock.serviceImplementation;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+import com.wisdomLeaf.speakingclock.model.TimeConversion;
+import com.wisdomLeaf.speakingclock.repository.TimeConversionRepository;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class TimeConversionServiceTest {
+	@InjectMocks
+    private TimeConversionServiceImpl timeConversionService;
+
+    @Mock
+    private TimeConversionRepository timeConversionRepository;
+
+    @Test
+    public void testConvertTimeToWords_ValidInput() {
+        // Arrange
+        String inputTime = "08:34";
+        
+        // Mock the behavior of the repository if needed
+        when(timeConversionRepository.save(any(TimeConversion.class))).thenReturn(null);
+
+        // Act
+        String result = timeConversionService.convertTimeToWords(inputTime);
+
+        // Assert
+        // Add assertions here to verify that the result is as expected
+    }
+
+    @Test(expected = TimeConversionException.class)
+    public void testConvertTimeToWords_InvalidInput() {
+        // Arrange
+        String inputTime = "invalid-time";
+        
+        // Mock the behavior of the repository if needed
+        // For example, you can simulate a repository exception here
+        when(timeConversionRepository.save(any(TimeConversion.class))).thenThrow(new RuntimeException("Simulated exception"));
+
+        // Act
+        timeConversionService.convertTimeToWords(inputTime);
+
+        // No need for assertions here; the test should throw an exception
+    }
+}

@@ -1,0 +1,14 @@
+package com.wisdomLeaf.speakingclock.model;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "time_conversions")
+public class TimeConversion {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	private String inputTime;
+	private String convertedTime;
+}

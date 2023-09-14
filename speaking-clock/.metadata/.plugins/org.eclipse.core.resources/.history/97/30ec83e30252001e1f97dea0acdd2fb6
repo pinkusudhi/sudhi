@@ -1,0 +1,5 @@
+package com.wisdomLeaf.speakingclock.service;
+
+public interface TimeConversionService {
+	String convertTimeToWords(String inputTime);
+}

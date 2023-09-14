@@ -1,0 +1,34 @@
+package com.wisdomLeaf.speakingclock.serviceImplementation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wisdomLeaf.speakingclock.exception.TimeConversionException;
+import com.wisdomLeaf.speakingclock.model.TimeConversion;
+import com.wisdomLeaf.speakingclock.repository.TimeConversionRepository;
+import com.wisdomLeaf.speakingclock.service.TimeConversionService;
+
+@Service
+public class TimeConversionServiceImpl implements com.wisdomLeaf.speakingclock.service.TimeConversionService{
+
+	private final TimeConversionRepository timeConversionRepository;
+
+    @Autowired
+    public TimeConversionServiceImpl(TimeConversionRepository timeConversionRepository) {
+        this.timeConversionRepository = timeConversionRepository;
+    }
+
+    @Override
+    public String convertTimeToWords(String inputTime) {
+        // Implement the conversion logic here.
+        // Example: "08:34" -> "It's eight thirty four"
+
+        // Save the conversion to the database
+        TimeConversion timeConversion = new TimeConversion();
+        timeConversion.setInputTime(inputTime);
+        timeConversion.setConvertedTime(convertedTime);
+        timeConversionRepository.save(timeConversion);
+
+        return convertedTime;
+    }
+}
